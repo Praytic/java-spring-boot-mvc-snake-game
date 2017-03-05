@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
+import java.awt.geom.RoundRectangle2D;
 
 import static com.vchernogorov.Application.debug;
 
@@ -32,20 +33,35 @@ public class ViewManagerImpl implements ViewManager {
         Snake snake = snakeManager.getSnake();
         SnakePart snakeHead = snake.getHead();
         SnakePart snakeTail = snake.getTail();
+        Rectangle r = snakeHead.getRect();
+        RoundRectangle2D rs = new RoundRectangle2D.Double(0, 0, r.width, r.height, r.width, r.height);
+        RoundRectangle2D.Double rhead = new RoundRectangle2D.Double(0, 0,
+                rs.getWidth() / 2, rs.getHeight() / 2, rs.getArcWidth() / 2, rs.getArcHeight() / 2);
+        RoundRectangle2D.Double rbody = new RoundRectangle2D.Double(0, 0,
+                rs.getWidth() / 3, rs.getHeight() / 3, rs.getArcWidth() / 3, rs.getArcHeight() / 3);
+        RoundRectangle2D.Double rtail = new RoundRectangle2D.Double(0, 0,
+                rs.getWidth() / 4, rs.getHeight() / 4, rs.getArcWidth() / 4, rs.getArcHeight() / 4);
+
         for (SnakePart snakePart : snake.getParts()) {
             g.setColor(Color.YELLOW);
-            Rectangle r = snakePart.getRect();
+            r = snakePart.getRect();
             if (snakePart == snakeHead) {
-                g.drawRoundRect(r.x, r.y, r.width / 2, r.height / 2, r.width / 2 / 2, r.height / 2 / 2);
-                g.fillRoundRect(r.x, r.y, r.width / 2, r.height / 2, r.width / 2 / 2, r.height / 2 / 2);
+                rhead.x = r.getX() + r.getWidth() / 2 - rhead.getWidth() / 2;
+                rhead.y = r.getY() + r.getHeight() / 2 - rhead.getHeight() / 2;
+                g.draw(rhead);
+                g.fill(rhead);
             }
             else if (snakePart == snakeTail) {
-                g.drawRoundRect(r.x, r.y, r.width / 4, r.height / 4, r.width / 4 / 2, r.height / 4 / 2);
-                g.fillRoundRect(r.x, r.y, r.width / 4, r.height / 4, r.width / 4 / 2, r.height / 4 / 2);
+                rtail.x = r.getX() + r.getWidth() / 2 - rtail.getWidth() / 4;
+                rtail.y = r.getY() + r.getHeight() / 2 - rtail.getHeight() / 4;
+                g.draw(rtail);
+                g.fill(rtail);
             }
             else {
-                g.drawRoundRect(r.x, r.y, r.width / 3, r.height / 3, r.width / 3 / 2, r.height / 3 / 2);
-                g.fillRoundRect(r.x, r.y, r.width / 3, r.height / 3, r.width / 3 / 2, r.height / 3 / 2);
+                rbody.x = r.getX() + r.getWidth() / 2 - rbody.getWidth() / 3;
+                rbody.y = r.getY() + r.getHeight() / 2 - rbody.getHeight() / 3;
+                g.draw(rbody);
+                g.fill(rbody);
             }
         }
         for (Frog frog : frogManager.getFrogs()) {

@@ -10,17 +10,27 @@ import java.awt.geom.Area;
 @Service
 public class SnakeCollisionController implements CollisionController {
 
+    private Area collisionArea;
+
     @Autowired
     private SnakeManager snakeManager;
 
+    public SnakeCollisionController() {
+        collisionArea = new Area();
+    }
+
     @Override
-    public Area getCollisionArea() {
-        Area area = new Area();
+    public void refreshCollisionArea() {
+        collisionArea = new Area();
         snakeManager.getSnake().getParts().stream()
                 .map(SnakePart::getRect)
                 .map(Area::new)
-                .forEach(area::add);
-        return area;
+                .forEach(collisionArea::add);
+    }
+
+    @Override
+    public Area getCollisionArea() {
+        return collisionArea;
     }
 
     public Area getBodyCollisionArea() {

@@ -7,13 +7,14 @@ import org.springframework.stereotype.Service;
 
 import java.awt.*;
 import java.awt.geom.Area;
-import java.util.Collection;
 import java.util.Random;
 
 @Service
 public class GameCollisionController implements CollisionController {
 
     private final Random random;
+
+    private Area collisionArea;
 
     @Autowired
     private SnakeCollisionController snakeCollisionController;
@@ -23,24 +24,23 @@ public class GameCollisionController implements CollisionController {
     private GameManager gameManager;
 
     public GameCollisionController() {
-        this.random = new Random();
+        random = new Random();
+        collisionArea = new Area();
+    }
+
+    @Override
+    public void refreshCollisionArea() {
+        Area frogCollisionArea = frogCollisionController.getCollisionArea();
+        Area snakeCollisionArea = snakeCollisionController.getCollisionArea();
+
+        collisionArea = new Area();
+        collisionArea.add(frogCollisionArea);
+        collisionArea.add(snakeCollisionArea);
     }
 
     @Override
     public Area getCollisionArea() {
-        Area frogCollisionArea = frogCollisionController.getCollisionArea();
-        Area snakeCollisionArea = snakeCollisionController.getCollisionArea();
-
-        Area collisionArea = new Area();
-        collisionArea.add(frogCollisionArea);
-        collisionArea.add(snakeCollisionArea);
         return collisionArea;
-    }
-
-    public Area getCollisionArea(Collection<Rectangle> rects) {
-        Area area = new Area();
-        rects.stream().map(Area::new).forEach(area::add);
-        return area;
     }
 
     public Rectangle getRandomPosition(Dimension dimension) {

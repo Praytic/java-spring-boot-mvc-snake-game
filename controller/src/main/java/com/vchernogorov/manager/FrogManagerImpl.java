@@ -1,8 +1,11 @@
 package com.vchernogorov.manager;
 
 import com.vchernogorov.Constants;
+import com.vchernogorov.collision.GameCollisionController;
 import com.vchernogorov.listener.FrogScheduledListener;
 import com.vchernogorov.model.game.Frog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -11,8 +14,12 @@ import java.awt.*;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.vchernogorov.Application.debug;
+
 @Service
 public class FrogManagerImpl implements FrogManager {
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private Set<Frog> frogs;
 
@@ -21,6 +28,8 @@ public class FrogManagerImpl implements FrogManager {
 
     @Autowired
     private FrogScheduledListener frogScheduledListener;
+    @Autowired
+    private GameCollisionController collisionController;
 
     public FrogManagerImpl(@Value("${frog.number}") int frogNumber,
                            @Value("${frog.scale}") float frogDimension) {
@@ -42,6 +51,10 @@ public class FrogManagerImpl implements FrogManager {
             Rectangle frogArea = new Rectangle(position.x, position.y, frogDimension.width, frogDimension.height);
             Frog frog = new Frog(frogArea);
             this.frogs.add(frog);
+            collisionController.refreshCollisionArea();
+
+            debug(logger, "Frog was created at [].", frogArea);
+
             return frog;
         } catch (InterruptedException e) {
             throw new RuntimeException("Error occurred during frog creation.");

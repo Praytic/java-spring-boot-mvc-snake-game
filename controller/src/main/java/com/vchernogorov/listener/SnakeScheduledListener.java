@@ -57,6 +57,10 @@ public class SnakeScheduledListener implements ScheduledListener {
         else {
             tickNumber = 0;
         }
+
+        snakeController.moveSnake();
+        collisionController.refreshCollisionArea();
+
         Snake snake = snakeController.getSnake();
         Set<Frog> frogs = frogController.getFrogs();
         GameField field = gameController.getField();
@@ -85,7 +89,6 @@ public class SnakeScheduledListener implements ScheduledListener {
             frogController.createFrog();
             snakeController.addSnakePart();
         }
-        snakeController.moveSnake();
         gamePanel.repaint();
     }
 }

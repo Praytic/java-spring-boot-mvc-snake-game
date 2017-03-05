@@ -3,7 +3,6 @@ package com.vchernogorov.listener;
 import com.vchernogorov.collision.GameCollisionController;
 import com.vchernogorov.manager.FrogManagerImpl;
 import com.vchernogorov.manager.GameManagerImpl;
-import com.vchernogorov.model.game.GameField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,24 +42,23 @@ public class FrogScheduledListener implements ScheduledListener {
             return;
         }
         Area collisionArea = gameCollisionController.getCollisionArea();
-        GameField field = gameManager.getField();
         Dimension frogScale = frogManager.getFrogDimension();
         Rectangle newSpot;
         do {
             if (gameManager.isGameStopped() || checkFreeSpotsSize()) {
                 return;
             }
-            newSpot = tryNewSpot(frogScale, field.getBorders());
+            newSpot = tryNewSpot(frogScale);
         } while (collisionArea.contains(newSpot));
         freeSpots.add(newSpot.getLocation());
 
         debug(logger, "Found new position for frog [].", newSpot);
     }
 
-    private Rectangle tryNewSpot(Dimension frogDimension, Rectangle field) {
-        Rectangle newPosition = gameCollisionController.getRandomPosition(frogDimension, field);
+    private Rectangle tryNewSpot(Dimension frogDimension) {
+        Rectangle newPosition = gameCollisionController.getRandomPosition(frogDimension);
         if (freeSpots.stream().anyMatch(position -> position.equals(newPosition.getLocation()))) {
-            tryNewSpot(frogDimension, field);
+            tryNewSpot(frogDimension);
         }
         return newPosition;
     }

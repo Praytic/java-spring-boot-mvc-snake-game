@@ -20,14 +20,14 @@ public class Snake {
         return parts.stream()
                 .filter(part -> part.getPreviousPart() == null)
                 .findAny()
-                .orElseThrow(() -> new IllegalStateException("Snake was built wrong"));
+                .orElseThrow(() -> new IllegalStateException("Can't find snake's head."));
     }
 
     public SnakePart getTail() {
         return parts.stream()
                 .filter(part -> part.getNextPart() == null)
                 .findAny()
-                .orElseThrow(() -> new IllegalStateException("Snake was built wrong"));
+                .orElseThrow(() -> new IllegalStateException("Can't find snake's tail."));
     }
 
     public List<SnakePart> getBody() {

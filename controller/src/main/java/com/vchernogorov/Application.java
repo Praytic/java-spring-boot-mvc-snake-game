@@ -1,6 +1,7 @@
 package com.vchernogorov;
 
 import com.vchernogorov.manager.GameManager;
+import com.vchernogorov.manager.GameManagerImpl;
 import com.vchernogorov.manager.SnakeManagerImpl;
 import com.vchernogorov.manager.ViewManager;
 import org.slf4j.Logger;
@@ -24,9 +25,10 @@ public class Application {
 
     @Bean
     public GamePanel gamePanel(SnakeManagerImpl.SnakeAdapter snakeAdapter, GameManager gameManager,
-                               ViewManager viewManager) {
+                               ViewManager viewManager, GameManagerImpl.GameAdapter gameAdapter) {
         GamePanel panel = new GamePanel(viewManager::draw);
         panel.addKeyListener(snakeAdapter);
+        panel.addKeyListener(gameAdapter);
         panel.setPreferredSize(gameManager.getField().getBorders().getSize());
         return panel;
     }

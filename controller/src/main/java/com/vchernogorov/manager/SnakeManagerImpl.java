@@ -96,7 +96,6 @@ public class SnakeManagerImpl implements SnakeManager {
             nextSnakePart = currentSnakePart;
         }
 
-
         debug(logger, "Snake was created at [].", snake.getHead().getRect());
 
         return snake;
@@ -105,11 +104,11 @@ public class SnakeManagerImpl implements SnakeManager {
     @Override
     public void addSnakePart() {
         SnakePart tail = snake.getTail();
-        SnakePart newTail = new SnakePart(tail.getRect(), null, tail, tail.getDirection());
-        if (!gameManager.getField().contains(newTail.getRect())) {
-            throw new CollisionException("New snake part should not appear outside the game field.");
-        }
+        SnakePart newTail = new SnakePart(new Rectangle(tail.getRect()), null, tail, tail.getDirection());
+        Point delta = tail.getDirection().delta(snakePartDimension);
+        newTail.getRect().translate(-delta.x, -delta.y);
         tail.setNextPart(newTail);
+        snake.getParts().add(newTail);
     }
 
     @Override

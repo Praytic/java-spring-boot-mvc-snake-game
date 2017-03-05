@@ -10,5 +10,7 @@ public interface GameManager extends Manager {
 
     void stopGame();
 
+    void continueGame();
+
     void startGame();
 }

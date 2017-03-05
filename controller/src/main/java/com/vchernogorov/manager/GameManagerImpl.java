@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 @Service
 public class GameManagerImpl implements GameManager {
@@ -42,10 +44,33 @@ public class GameManagerImpl implements GameManager {
         this.gameIsStopped = true;
     }
 
+    public void continueGame() {
+        gameIsStopped = false;
+    }
+
     public void startGame() {
         gameIsStopped = false;
         snakeManager.createSnake();
         frogManager.createFrogs();
         snakeManager.enableDirectionChange();
     }
+
+    @org.springframework.stereotype.Component
+    public class GameAdapter extends KeyAdapter {
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+            int key = e.getKeyCode();
+            if (key == KeyEvent.VK_ENTER) {
+                if (gameIsStopped) {
+                    continueGame();
+                }
+                else {
+                    stopGame();
+                }
+            }
+        }
+    }
+
+
 }

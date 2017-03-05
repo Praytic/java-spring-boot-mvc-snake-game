@@ -64,6 +64,7 @@ public class FrogManagerImpl implements FrogManager {
 
     @Override
     public Set<Frog> createFrogs() {
+        frogs = new HashSet<>();
         for (int i = 0; i < frogNumber; i++) {
             frogs.add(createFrog());
         }

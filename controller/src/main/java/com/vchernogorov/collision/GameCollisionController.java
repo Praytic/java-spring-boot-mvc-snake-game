@@ -1,11 +1,9 @@
 package com.vchernogorov.collision;
 
-import com.vchernogorov.Constants;
 import com.vchernogorov.manager.GameManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.awt.*;
 import java.awt.geom.Area;
 import java.util.Random;
 
@@ -41,16 +39,5 @@ public class GameCollisionController implements CollisionController {
     @Override
     public Area getCollisionArea() {
         return collisionArea;
-    }
-
-    public Rectangle getRandomPosition(Dimension dimension) {
-        return getRandomPosition(dimension, gameManager.getField().getBorders());
-    }
-
-    public Rectangle getRandomPosition(Dimension dimension, Rectangle field) {
-        Point newPosition = new Point(
-                random.nextInt((field.width - dimension.width) / Constants.FIELD_CELL_SIZE) * Constants.FIELD_CELL_SIZE,
-                random.nextInt((field.height - dimension.height) / Constants.FIELD_CELL_SIZE) * Constants.FIELD_CELL_SIZE);
-        return new Rectangle(newPosition, dimension);
     }
 }

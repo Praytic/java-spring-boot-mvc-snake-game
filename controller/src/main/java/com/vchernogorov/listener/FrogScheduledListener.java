@@ -1,7 +1,9 @@
 package com.vchernogorov.listener;
 
+import com.vchernogorov.Constants;
 import com.vchernogorov.collision.GameCollisionController;
 import com.vchernogorov.manager.FrogManager;
+import com.vchernogorov.manager.GameManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.awt.*;
 import java.awt.geom.Area;
+import java.util.Random;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
@@ -26,11 +29,14 @@ public class FrogScheduledListener implements ScheduledListener {
     @Autowired
     private GameCollisionController gameCollisionController;
 
+    @Autowired
+    private GameManager gameManager;
+
+    @Autowired
     private FrogManager frogManager;
 
-    public FrogScheduledListener(FrogManager frogManager) {
-        this.frogManager = frogManager;
-        this.freeSpots = new ArrayBlockingQueue<>(frogManager.getFrogNumber());
+    public FrogScheduledListener() {
+        this.freeSpots = new ArrayBlockingQueue<>(100);
     }
 
     @Async
@@ -39,29 +45,36 @@ public class FrogScheduledListener implements ScheduledListener {
         if (spotsReady()) {
             return;
         }
+
+        Random random = new Random();
         Area collisionArea = gameCollisionController.getCollisionArea();
         Dimension frogScale = frogManager.getFrogDimension();
-        Rectangle newSpot;
+        Rectangle spot = new Rectangle(frogScale);
+        Point position;
         do {
             if (spotsReady()) {
                 return;
             }
-            newSpot = tryNewSpot(frogScale);
-        } while (collisionArea.contains(newSpot));
-        boolean inserted = freeSpots.offer(newSpot.getLocation());
+            position = tryNewSpot(frogScale, random);
+            spot.setLocation(position);
+        } while (collisionArea.contains(spot) || !gameManager.getField().contains(spot));
+        boolean inserted = freeSpots.offer(position);
 
         if (inserted) {
-            debug(logger, "Found new position for frog [].", newSpot);
+            debug(logger, "Found new position for frog [].", position);
         }
     }
 
-    private Rectangle tryNewSpot(Dimension frogDimension) {
-        Rectangle newPosition = gameCollisionController.getRandomPosition(frogDimension);
+    private Point tryNewSpot(Dimension frogDimension, Random random) {
+        Rectangle field = gameManager.getField().getBorders();
+        Point newPosition = new Point(
+                random.nextInt((field.width) / frogDimension.width) * frogDimension.width,
+                random.nextInt((field.height) / frogDimension.height) * frogDimension.height);
 
         debug(logger, "Trying to find new spot for frog here: [].", newPosition);
 
         if (freeSpots.stream().anyMatch(position -> position.equals(newPosition.getLocation()))) {
-            tryNewSpot(frogDimension);
+            tryNewSpot(frogDimension, random);
         }
         return newPosition;
     }

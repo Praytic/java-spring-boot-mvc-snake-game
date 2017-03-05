@@ -71,6 +71,7 @@ public class SnakeScheduledListener implements ScheduledListener {
 
             info(logger, "Stopping game. Snake collides with something.");
 
+            gameController.setGameLost(true);
             gameController.stopGame();
             return;
         }

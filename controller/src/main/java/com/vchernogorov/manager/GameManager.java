@@ -13,4 +13,10 @@ public interface GameManager extends Manager {
     void continueGame();
 
     void startGame();
+
+    void restartGame();
+
+    boolean isGameLost();
+
+    void setGameLost(boolean gameLost);
 }

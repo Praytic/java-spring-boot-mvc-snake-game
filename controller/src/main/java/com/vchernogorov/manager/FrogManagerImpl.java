@@ -49,6 +49,14 @@ public class FrogManagerImpl implements FrogManager {
     }
 
     @Override
+    public Set<Frog> createFrogs() {
+        for (int i = 0; i < frogNumber; i++) {
+            frogs.add(createFrog());
+        }
+        return frogs;
+    }
+
+    @Override
     public void removeFrog(Frog frog) {
         this.frogs.remove(frog);
     }

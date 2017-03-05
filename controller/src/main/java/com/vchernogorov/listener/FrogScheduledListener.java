@@ -4,6 +4,8 @@ import com.vchernogorov.collision.GameCollisionController;
 import com.vchernogorov.manager.FrogManagerImpl;
 import com.vchernogorov.manager.GameManagerImpl;
 import com.vchernogorov.model.game.GameField;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -14,8 +16,12 @@ import java.awt.geom.Area;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
+import static com.vchernogorov.Application.debug;
+
 @Component
 public class FrogScheduledListener implements ScheduledListener {
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private BlockingQueue<Point> freeSpots;
 
@@ -47,6 +53,8 @@ public class FrogScheduledListener implements ScheduledListener {
             newSpot = tryNewSpot(frogScale, field.getBorders());
         } while (collisionArea.contains(newSpot));
         freeSpots.add(newSpot.getLocation());
+
+        debug(logger, "Found new position for frog [].", newSpot);
     }
 
     private Rectangle tryNewSpot(Dimension frogDimension, Rectangle field) {
@@ -58,7 +66,7 @@ public class FrogScheduledListener implements ScheduledListener {
     }
 
     private boolean checkFreeSpotsSize() {
-        return freeSpots.size() >= 10;
+        return freeSpots.remainingCapacity() < 10;
     }
 
     public BlockingQueue<Point> getFreeSpots() {

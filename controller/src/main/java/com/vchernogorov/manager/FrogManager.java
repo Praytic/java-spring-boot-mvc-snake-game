@@ -11,6 +11,8 @@ public interface FrogManager extends Manager {
 
     Frog createFrog();
 
+    Set<Frog> createFrogs();
+
     void removeFrog(Frog frog);
 
     Dimension getFrogDimension();

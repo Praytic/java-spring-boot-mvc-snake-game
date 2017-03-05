@@ -18,6 +18,9 @@ public class GameManagerImpl implements GameManager {
     @Autowired
     private SnakeManager snakeManager;
 
+    @Autowired
+    private FrogManager frogManager;
+
     public GameManagerImpl(@Value("${field.width}") float fieldWidth,
                            @Value("${field.height}") float fieldHeight) {
         int width = (int) (Constants.FIELD_CELL_SIZE * fieldWidth);
@@ -40,8 +43,9 @@ public class GameManagerImpl implements GameManager {
     }
 
     public void startGame() {
+        gameIsStopped = false;
         snakeManager.createSnake();
-        this.gameIsStopped = false;
+        frogManager.createFrogs();
         snakeManager.enableDirectionChange();
     }
 }

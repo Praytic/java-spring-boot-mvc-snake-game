@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 
 import static com.vchernogorov.Application.debug;
@@ -30,11 +31,32 @@ public class ViewManagerImpl implements ViewManager {
         debug(logger, "Redrawing components...");
 
         Color color = g.getColor();
+        drawFrogs(g);
+        drawSnake(g);
+        g.setColor(color);
+    }
+
+    private void drawFrogs(Graphics2D g) {
+        g.setColor(Color.GREEN);
+        Dimension d = frogManager.getFrogDimension();
+        RoundRectangle2D.Double rs = new RoundRectangle2D.Double(0, 0, d.getWidth() / 3, d.getHeight() / 3,
+                d.getWidth() / 3, d.getHeight() / 3);
+        for (Frog frog : frogManager.getFrogs()) {
+            Rectangle2D r = frog.getRect();
+            rs.x = r.getX() + r.getWidth() / 2 - rs.getWidth() / 3;
+            rs.y = r.getY() + r.getHeight() / 2 - rs.getHeight() / 3;
+            g.draw(rs);
+            g.fill(rs);
+        }
+    }
+
+    private void drawSnake(Graphics2D g) {
+        g.setColor(Color.YELLOW);
         Snake snake = snakeManager.getSnake();
         SnakePart snakeHead = snake.getHead();
         SnakePart snakeTail = snake.getTail();
-        Rectangle r = snakeHead.getRect();
-        RoundRectangle2D rs = new RoundRectangle2D.Double(0, 0, r.width, r.height, r.width, r.height);
+        Dimension d = snakeManager.getSnakePartDimension();
+        RoundRectangle2D rs = new RoundRectangle2D.Double(0, 0, d.width, d.height, d.width, d.height);
         RoundRectangle2D.Double rhead = new RoundRectangle2D.Double(0, 0,
                 rs.getWidth() / 2, rs.getHeight() / 2, rs.getArcWidth() / 2, rs.getArcHeight() / 2);
         RoundRectangle2D.Double rbody = new RoundRectangle2D.Double(0, 0,
@@ -43,8 +65,7 @@ public class ViewManagerImpl implements ViewManager {
                 rs.getWidth() / 4, rs.getHeight() / 4, rs.getArcWidth() / 4, rs.getArcHeight() / 4);
 
         for (SnakePart snakePart : snake.getParts()) {
-            g.setColor(Color.YELLOW);
-            r = snakePart.getRect();
+            Rectangle r = snakePart.getRect();
             if (snakePart == snakeHead) {
                 rhead.x = r.getX() + r.getWidth() / 2 - rhead.getWidth() / 2;
                 rhead.y = r.getY() + r.getHeight() / 2 - rhead.getHeight() / 2;
@@ -64,11 +85,5 @@ public class ViewManagerImpl implements ViewManager {
                 g.fill(rbody);
             }
         }
-        for (Frog frog : frogManager.getFrogs()) {
-            g.setColor(Color.GREEN);
-            g.draw(frog.getRect());
-            g.fill(frog.getRect());
-        }
-        g.setColor(color);
     }
 }

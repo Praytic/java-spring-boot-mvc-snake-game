@@ -77,11 +77,7 @@ public class SnakeScheduledListener implements ScheduledListener {
         List<Frog> consumedFrogs = frogs.stream()
                 .filter(frog -> snakeCollisionArea.contains(frog.getRect()))
                 .collect(Collectors.toList());
-        if (consumedFrogs.size() > 1) {
-            throw new RuntimeException("Something went wrong. Only 1 frog can be consumed at a time.");
-        }
-        if (consumedFrogs.size() != 0) {
-            Frog consumedFrog = consumedFrogs.get(0);
+        for (Frog consumedFrog : consumedFrogs) {
 
             info(logger, "Snake eats the frog at [].", consumedFrog.getRect());
 

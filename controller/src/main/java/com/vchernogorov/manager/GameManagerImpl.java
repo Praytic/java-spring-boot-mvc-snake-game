@@ -1,9 +1,11 @@
 package com.vchernogorov.manager;
 
 import com.vchernogorov.Constants;
+import com.vchernogorov.listener.FrogScheduledListener;
 import com.vchernogorov.model.game.GameField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
@@ -22,6 +24,12 @@ public class GameManagerImpl implements GameManager {
 
     @Autowired
     private FrogManager frogManager;
+
+    @Autowired
+    private FrogScheduledListener frogScheduledListener;
+
+    @Autowired
+    private TaskScheduler taskScheduler;
 
     public GameManagerImpl(@Value("${field.width}") float fieldWidth,
                            @Value("${field.height}") float fieldHeight) {
@@ -49,10 +57,14 @@ public class GameManagerImpl implements GameManager {
     }
 
     public void startGame() {
-        gameIsStopped = false;
         snakeManager.createSnake();
         frogManager.createFrogs();
         snakeManager.enableDirectionChange();
+        taskScheduler.scheduleAtFixedRate(() -> {
+            if (frogScheduledListener.spotsReady()) {
+                continueGame();
+            }
+        }, 1000);
     }
 
     @org.springframework.stereotype.Component

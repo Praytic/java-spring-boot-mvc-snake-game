@@ -10,8 +10,10 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -22,6 +24,13 @@ import java.util.List;
 @EnableScheduling
 @EnableAsync
 public class Application {
+
+    @Bean
+    public TaskScheduler taskScheduler() {
+        ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
+        scheduler.setPoolSize(10);
+        return scheduler;
+    }
 
     @Bean
     public GamePanel gamePanel(SnakeManagerImpl.SnakeAdapter snakeAdapter, GameManager gameManager,

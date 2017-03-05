@@ -71,6 +71,9 @@ public class FrogManagerImpl implements FrogManager {
 
     @Override
     public void removeFrog(Frog frog) {
+
+        debug(logger, "Remove frog at [].", frog.getRect());
+
         this.frogs.remove(frog);
     }
 

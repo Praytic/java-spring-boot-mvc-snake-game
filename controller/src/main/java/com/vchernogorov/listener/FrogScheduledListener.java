@@ -2,7 +2,6 @@ package com.vchernogorov.listener;
 
 import com.vchernogorov.collision.GameCollisionController;
 import com.vchernogorov.manager.FrogManagerImpl;
-import com.vchernogorov.manager.GameManagerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,49 +24,52 @@ public class FrogScheduledListener implements ScheduledListener {
     private BlockingQueue<Point> freeSpots;
 
     @Autowired
-    private GameManagerImpl gameManager;
-    @Autowired
     private FrogManagerImpl frogManager;
     @Autowired
     private GameCollisionController gameCollisionController;
 
     public FrogScheduledListener() {
-        this.freeSpots = new ArrayBlockingQueue<>(10);
+        this.freeSpots = new ArrayBlockingQueue<>(100);
     }
 
     @Async
     @Scheduled(fixedRate = 10)
     public void findFreePosition() {
-        if (gameManager.isGameStopped() || checkFreeSpotsSize()) {
+        if (spotsReady()) {
             return;
         }
         Area collisionArea = gameCollisionController.getCollisionArea();
         Dimension frogScale = frogManager.getFrogDimension();
         Rectangle newSpot;
         do {
-            if (gameManager.isGameStopped() || checkFreeSpotsSize()) {
+            if (spotsReady()) {
                 return;
             }
             newSpot = tryNewSpot(frogScale);
         } while (collisionArea.contains(newSpot));
-        freeSpots.add(newSpot.getLocation());
+        boolean inserted = freeSpots.offer(newSpot.getLocation());
 
-        debug(logger, "Found new position for frog [].", newSpot);
+        if (inserted) {
+            debug(logger, "Found new position for frog [].", newSpot);
+        }
     }
 
     private Rectangle tryNewSpot(Dimension frogDimension) {
         Rectangle newPosition = gameCollisionController.getRandomPosition(frogDimension);
+
+        debug(logger, "Trying to find new spot for frog here: [].", newPosition);
+
         if (freeSpots.stream().anyMatch(position -> position.equals(newPosition.getLocation()))) {
             tryNewSpot(frogDimension);
         }
         return newPosition;
     }
 
-    private boolean checkFreeSpotsSize() {
-        return freeSpots.remainingCapacity() < 10;
-    }
-
     public BlockingQueue<Point> getFreeSpots() {
         return freeSpots;
+    }
+
+    public boolean spotsReady() {
+        return freeSpots.remainingCapacity() == 0;
     }
 }

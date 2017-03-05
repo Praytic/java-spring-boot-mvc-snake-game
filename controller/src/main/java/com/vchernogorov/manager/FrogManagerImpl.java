@@ -24,6 +24,7 @@ public class FrogManagerImpl implements FrogManager {
     private Set<Frog> frogs;
 
     private Dimension frogDimension;
+
     private int frogNumber;
 
     @Autowired
@@ -85,5 +86,9 @@ public class FrogManagerImpl implements FrogManager {
     @Override
     public Dimension getFrogDimension() {
         return frogDimension;
+    }
+
+    public int getFrogNumber() {
+        return frogNumber;
     }
 }

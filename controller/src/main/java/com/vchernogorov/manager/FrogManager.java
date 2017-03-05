@@ -16,4 +16,6 @@ public interface FrogManager extends Manager {
     void removeFrog(Frog frog);
 
     Dimension getFrogDimension();
+
+    int getFrogNumber();
 }

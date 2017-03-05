@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.concurrent.ScheduledFuture;
 
 @Service
 public class GameManagerImpl implements GameManager {
@@ -18,6 +19,8 @@ public class GameManagerImpl implements GameManager {
     private GameField field;
 
     private boolean gameIsStopped;
+
+    private ScheduledFuture<?> waitingForLoading;
 
     @Autowired
     private SnakeManager snakeManager;
@@ -60,9 +63,10 @@ public class GameManagerImpl implements GameManager {
         snakeManager.createSnake();
         frogManager.createFrogs();
         snakeManager.enableDirectionChange();
-        taskScheduler.scheduleAtFixedRate(() -> {
+        waitingForLoading = taskScheduler.scheduleAtFixedRate(() -> {
             if (frogScheduledListener.spotsReady()) {
                 continueGame();
+                waitingForLoading.cancel(true);
             }
         }, 1000);
     }

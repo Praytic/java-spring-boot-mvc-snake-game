@@ -1,7 +1,7 @@
 package com.vchernogorov.listener;
 
 import com.vchernogorov.collision.GameCollisionController;
-import com.vchernogorov.manager.FrogManagerImpl;
+import com.vchernogorov.manager.FrogManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +24,13 @@ public class FrogScheduledListener implements ScheduledListener {
     private BlockingQueue<Point> freeSpots;
 
     @Autowired
-    private FrogManagerImpl frogManager;
-    @Autowired
     private GameCollisionController gameCollisionController;
 
-    public FrogScheduledListener() {
-        this.freeSpots = new ArrayBlockingQueue<>(100);
+    private FrogManager frogManager;
+
+    public FrogScheduledListener(FrogManager frogManager) {
+        this.frogManager = frogManager;
+        this.freeSpots = new ArrayBlockingQueue<>(frogManager.getFrogNumber());
     }
 
     @Async

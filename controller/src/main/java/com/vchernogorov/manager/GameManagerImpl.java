@@ -1,7 +1,7 @@
 package com.vchernogorov.manager;
 
 import com.vchernogorov.Constants;
-import com.vchernogorov.listener.FrogScheduledListener;
+import com.vchernogorov.listener.FrogPositioningActor;
 import com.vchernogorov.model.game.GameField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +37,7 @@ public class GameManagerImpl implements GameManager {
     private FrogManager frogManager;
 
     @Autowired
-    private FrogScheduledListener frogScheduledListener;
+    private FrogPositioningActor frogScheduledListener;
 
     @Autowired
     private TaskScheduler taskScheduler;

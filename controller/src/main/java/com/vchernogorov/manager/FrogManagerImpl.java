@@ -2,7 +2,7 @@ package com.vchernogorov.manager;
 
 import com.vchernogorov.Constants;
 import com.vchernogorov.collision.GameCollisionController;
-import com.vchernogorov.listener.FrogScheduledListener;
+import com.vchernogorov.listener.FrogPositioningActor;
 import com.vchernogorov.model.game.Frog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +28,7 @@ public class FrogManagerImpl implements FrogManager {
     private int frogNumber;
 
     @Autowired
-    private FrogScheduledListener frogScheduledListener;
+    private FrogPositioningActor frogPositioningActor;
     @Autowired
     private GameCollisionController collisionController;
 
@@ -48,7 +48,7 @@ public class FrogManagerImpl implements FrogManager {
     @Override
     public Frog createFrog() {
         try {
-            Point position = frogScheduledListener.getFreeSpots().take();
+            Point position = frogPositioningActor.getFreeSpots().take();
             Rectangle frogArea = new Rectangle(position.x, position.y, frogDimension.width, frogDimension.height);
             Frog frog = new Frog(frogArea);
             this.frogs.add(frog);
@@ -89,6 +89,7 @@ public class FrogManagerImpl implements FrogManager {
         return frogDimension;
     }
 
+    @Override
     public int getFrogNumber() {
         return frogNumber;
     }

@@ -2,9 +2,9 @@ package com.vchernogorov;
 
 import javax.swing.*;
 
-public class DemoFrame extends JFrame {
+public class GameFrame extends JFrame {
 
-    public DemoFrame(GamePanel gamePanel) {
+    public GameFrame(GamePanel gamePanel) {
         add(gamePanel);
         setResizable(false);
         pack();

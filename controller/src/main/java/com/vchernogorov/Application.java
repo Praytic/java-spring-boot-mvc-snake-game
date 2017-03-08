@@ -43,8 +43,8 @@ public class Application {
     }
 
     @Bean
-    public DemoFrame frame(GamePanel gamePanel) {
-        return new DemoFrame(gamePanel);
+    public GameFrame frame(GamePanel gamePanel) {
+        return new GameFrame(gamePanel);
     }
 
     @Bean

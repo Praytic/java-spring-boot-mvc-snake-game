@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 import static com.vchernogorov.Application.info;
 
 @Component
-public class SnakeScheduledListener implements ScheduledListener {
+public class SnakeMovementActor implements ScheduledActor {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 

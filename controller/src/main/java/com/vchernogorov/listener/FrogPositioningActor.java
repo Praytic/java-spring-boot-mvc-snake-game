@@ -1,6 +1,5 @@
 package com.vchernogorov.listener;
 
-import com.vchernogorov.Constants;
 import com.vchernogorov.collision.GameCollisionController;
 import com.vchernogorov.manager.FrogManager;
 import com.vchernogorov.manager.GameManager;
@@ -20,9 +19,11 @@ import java.util.concurrent.BlockingQueue;
 import static com.vchernogorov.Application.debug;
 
 @Component
-public class FrogScheduledListener implements ScheduledListener {
+public class FrogPositioningActor implements ScheduledActor {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    private Random random;
 
     private BlockingQueue<Point> freeSpots;
 
@@ -35,8 +36,9 @@ public class FrogScheduledListener implements ScheduledListener {
     @Autowired
     private FrogManager frogManager;
 
-    public FrogScheduledListener() {
+    public FrogPositioningActor() {
         this.freeSpots = new ArrayBlockingQueue<>(100);
+        random = new Random();
     }
 
     @Async
@@ -46,7 +48,6 @@ public class FrogScheduledListener implements ScheduledListener {
             return;
         }
 
-        Random random = new Random();
         Area collisionArea = gameCollisionController.getCollisionArea();
         Dimension frogScale = frogManager.getFrogDimension();
         Rectangle spot = new Rectangle(frogScale);
@@ -55,7 +56,7 @@ public class FrogScheduledListener implements ScheduledListener {
             if (spotsReady()) {
                 return;
             }
-            position = tryNewSpot(frogScale, random);
+            position = tryNewSpot();
             spot.setLocation(position);
         } while (collisionArea.contains(spot) || !gameManager.getField().contains(spot));
         boolean inserted = freeSpots.offer(position);
@@ -65,7 +66,8 @@ public class FrogScheduledListener implements ScheduledListener {
         }
     }
 
-    private Point tryNewSpot(Dimension frogDimension, Random random) {
+    private Point tryNewSpot() {
+        Dimension frogDimension = frogManager.getFrogDimension();
         Rectangle field = gameManager.getField().getBorders();
         Point newPosition = new Point(
                 random.nextInt((field.width) / frogDimension.width) * frogDimension.width,
@@ -74,7 +76,7 @@ public class FrogScheduledListener implements ScheduledListener {
         debug(logger, "Trying to find new spot for frog here: [].", newPosition);
 
         if (freeSpots.stream().anyMatch(position -> position.equals(newPosition.getLocation()))) {
-            tryNewSpot(frogDimension, random);
+            tryNewSpot();
         }
         return newPosition;
     }

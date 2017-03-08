@@ -1,4 +1,4 @@
 package com.vchernogorov.listener;
 
-public interface ScheduledListener {
+public interface ScheduledActor {
 }

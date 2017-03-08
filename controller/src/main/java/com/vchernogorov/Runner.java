@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class Runner implements CommandLineRunner {
 
     @Autowired
-    private DemoFrame frame;
+    private GameFrame frame;
 
     @Autowired
     private GameManager gameManager;

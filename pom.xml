@@ -21,6 +21,8 @@
         <slf4j.version>1.7.24</slf4j.version>
         <logback.version>1.2.1</logback.version>
         <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
+        <exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
+        <mainClass>com.vchernogorov.Application</mainClass>
     </properties>
 
     <dependencyManagement>
@@ -80,7 +82,28 @@
                             </goals>
                             <configuration>
                                 <classifier>spring-boot</classifier>
-                                <mainClass>com.vchernogorov.Application</mainClass>
+                                <mainClass>${mainClass}</mainClass>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>${exec-maven-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>default-cli</id>
+                            <goals>
+                                <goal>exec</goal>
+                            </goals>
+                            <configuration>
+                                <executable>java</executable>
+                                <arguments>
+                                    <argument>-jar</argument>
+                                    <argument>${basedir}/controller/target/controller-${project.version}-spring-boot.jar</argument>
+                                </arguments>
+                                <mainClass>${mainClass}</mainClass>
                             </configuration>
                         </execution>
                     </executions>
